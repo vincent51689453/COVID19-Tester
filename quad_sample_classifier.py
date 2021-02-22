@@ -30,10 +30,11 @@ area3_xmin, area3_ymin, area3_xmax, area3_ymax = 6,108,84,143
 area4_xmin, area4_ymin, area4_xmax, area4_ymax = 9,261,225,315
 
 #System Control Variables
-enable_roi = True    #ON/OFF Digital Zoom
-area_counter = 1     #Area Indicator
-max_FPS = 30         #FPS for this program
-delay = 0            #Delay counter
+enable_roi = True    # ON/OFF Digital Zoom
+area_counter = 1     # Area Indicator
+max_FPS = 30         # FPS for this program
+delay = 0            # Delay counter
+max_area_num = 4     # Total number of digital zoom areas
 
 #Capture and Loop
 while(True):
@@ -41,8 +42,9 @@ while(True):
     #FPS Counter
     clock.tick()
 
-    #Image capture
-    img = sensor.snapshot()
+    #Image capture (not capturing if wrong area_counter)
+    if(area_counter < (max_area_num+1)):
+        img = sensor.snapshot()
 
     #Image Rotation
     img = img.replace(img,vflip=True,hmirror=False,transpose=True)
@@ -73,7 +75,7 @@ while(True):
             w = area4_xmax-area4_xmin
             img = img.crop((area4_xmin, area4_ymin,w,h))
 
-        if(area_counter == 5):
+        if(area_counter == (max_area_num+1)):
             #Reset
             area_counter = 1
 
