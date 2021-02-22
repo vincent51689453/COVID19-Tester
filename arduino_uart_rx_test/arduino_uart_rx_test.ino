@@ -48,7 +48,9 @@ void loop()
   if (openMVSerial.available())
     incomingByte = openMVSerial.read();
     //The message is in HEX format
+    if((incomingByte<=4)&&(incomingByte>=1))
     Serial.println(incomingByte,HEX);
+    incomingByte = 0;
 
   //To OPENMV    
   if (Serial.available())

@@ -13,6 +13,8 @@ Image rotation:
 """
 
 import sensor, image, time
+from pyb import UART
+import ustruct
 
 #Camera sensor setup
 sensor.reset()
@@ -36,6 +38,9 @@ max_FPS = 30         # FPS for this program
 delay = 0            # Delay counter
 max_area_num = 4     # Total number of digital zoom areas
 
+#UART
+uart = UART(1,115200)
+
 #Capture and Loop
 while(True):
 
@@ -54,32 +59,49 @@ while(True):
             h = area1_ymax-area1_ymin
             w = area1_xmax-area1_xmin
             img = img.crop((area1_xmin, area1_ymin,w,h))
+            if(delay == (max_FPS-1)):
+                #Only send once before the end of this period
+                msg = ustruct.pack("b",1)
+                uart.write(msg)
 
         if(area_counter == 2):
             #Area 2
             h = area2_ymax-area2_ymin
             w = area2_xmax-area2_xmin
             img = img.crop((area2_xmin, area2_ymin,w,h))
+            if(delay == (max_FPS-1)):
+                #Only send once before the end of this period
+                msg = ustruct.pack("b",2)
+                uart.write(msg)
 
         if(area_counter == 3):
             #Area 3
             h = area3_ymax-area3_ymin
             w = area3_xmax-area3_xmin
             img = img.crop((area3_xmin, area3_ymin,w,h))
+            if(delay == (max_FPS-1)):
+                #Only send once before the end of this period
+                msg = ustruct.pack("b",3)
+                uart.write(msg)
 
         if(area_counter == 4):
             #Area 4
             h = area4_ymax-area4_ymin
             w = area4_xmax-area4_xmin
             img = img.crop((area4_xmin, area4_ymin,w,h))
+            if(delay == (max_FPS-1)):
+                #Only send once before the end of this period
+                msg = ustruct.pack("b",4)
+                uart.write(msg)
 
         if(area_counter == (max_area_num+1)):
             #Reset
             area_counter = 1
 
         #Frame Delay
-        if(delay % max_FPS == 0):
+        if(delay == max_FPS):
             area_counter += 1
+            delay = 0
 
     delay += 1
 
