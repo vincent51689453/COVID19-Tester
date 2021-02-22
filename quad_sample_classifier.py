@@ -25,7 +25,7 @@ clock = time.clock()
 
 #Digital Zoom Areas
 area1_xmin, area1_ymin, area1_xmax, area1_ymax = 6,29,46,62
-area2_xmin, area2_ymin, area2_xmax, area2_ymax = 145,23,202,67
+area2_xmin, area2_ymin, area2_xmax, area2_ymax = 196,7,234,69
 area3_xmin, area3_ymin, area3_xmax, area3_ymax = 6,108,84,143
 area4_xmin, area4_ymin, area4_xmax, area4_ymax = 9,261,225,315
 
@@ -42,10 +42,8 @@ while(True):
     #FPS Counter
     clock.tick()
 
-    #Image capture (not capturing if wrong area_counter)
-    if(area_counter < (max_area_num+1)):
-        img = sensor.snapshot()
-
+    #Image capture
+    img = sensor.snapshot()
     #Image Rotation
     img = img.replace(img,vflip=True,hmirror=False,transpose=True)
 
