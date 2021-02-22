@@ -13,8 +13,13 @@ Image rotation:
 """
 
 import sensor, image, time
+import pyb
 from pyb import UART
 import ustruct
+
+#GPIO
+ready = pyb.Pin("P2",pyb.Pin.OUT_PP)
+ready.low()
 
 #Camera sensor setup
 sensor.reset()
@@ -39,6 +44,8 @@ delay = 0            # Delay counter
 max_area_num = 4     # Total number of digital zoom areas
 
 #UART
+#OPENMV PO (UART1 RX) <-> Arduino MEGA 11 (TX)
+#OPENMV P1 (UART1 TX) <-> Arduino MEGA 10 (RX)
 uart = UART(1,115200)
 
 #Capture and Loop
@@ -46,6 +53,9 @@ while(True):
 
     #FPS Counter
     clock.tick()
+
+    #Send GPIO signal
+    ready.high()
 
     #Image capture
     img = sensor.snapshot()
