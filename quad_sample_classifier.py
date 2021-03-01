@@ -6,6 +6,13 @@
 """
 
 """
+Remark:
+1. Message of four samples (string) will be sent every 500ms.
+2. Message header = "A" and Message tail = "B"
+3. Each sample will be represented by a constant of four digits length.
+"""
+
+"""
 Image rotation:
 - vflip=False, hmirror=False, transpose=False -> 0 degree rotation
 - vflip=True, hmirror=False, transpose=True -> 90 degree rotation
@@ -42,9 +49,10 @@ area4_xmin, area4_ymin, area4_xmax, area4_ymax = 9,261,225,315
 #System Control Variables
 enable_roi = True    # ON/OFF Digital Zoom
 area_counter = 1     # Area Indicator
-max_FPS = 30         # FPS for this program
+max_FPS = 77         # FPS for this program
 delay = 0            # Delay counter
 max_area_num = 4     # Total number of digital zoom areas
+message_index = 0    # UART Message index
 
 #UART
 #OPENMV PO (UART1 RX) <-> Arduino MEGA 11 (TX)
@@ -73,49 +81,48 @@ while(True):
             h = area1_ymax-area1_ymin
             w = area1_xmax-area1_xmin
             img = img.crop(roi=(area1_xmin, area1_ymin,w,h))
-            if(delay == (max_FPS-1)):
+            if(delay == (int(max_FPS/8)-1)):
                 #Only send once before the end of this period
-                msg = ustruct.pack("b",1)
-                uart.write(msg)
+                print("Area1")
 
         if(area_counter == 2):
             #Area 2
             h = area2_ymax-area2_ymin
             w = area2_xmax-area2_xmin
             img = img.crop(roi=(area2_xmin, area2_ymin,w,h))
-            if(delay == (max_FPS-1)):
+            if(delay == (int(max_FPS/8)-1)):
                 #Only send once before the end of this period
-                msg = ustruct.pack("b",2)
-                uart.write(msg)
-
+                print("Area2")
         if(area_counter == 3):
             #Area 3
             h = area3_ymax-area3_ymin
             w = area3_xmax-area3_xmin
             img = img.crop(roi=(area3_xmin, area3_ymin,w,h))
-            if(delay == (max_FPS-1)):
+            if(delay == (int(max_FPS/8)-1)):
                 #Only send once before the end of this period
-                msg = ustruct.pack("b",3)
-                uart.write(msg)
+                print("Area3")
 
         if(area_counter == 4):
             #Area 4
             h = area4_ymax-area4_ymin
             w = area4_xmax-area4_xmin
             img = img.crop(roi=(area4_xmin, area4_ymin,w,h))
-            if(delay == (max_FPS-1)):
+            if(delay == (int(max_FPS/8)-1)):
                 #Only send once before the end of this period
-                msg = ustruct.pack("b",4)
-                uart.write(msg)
+                print("Area4")
 
         if(area_counter == (max_area_num+1)):
             #Reset
             area_counter = 1
+            # Send message
+            print("#{} Message->: {}".format(message_index,"000"))
+            message_index += 1
 
-        #Frame Delay
-        if(delay == max_FPS):
-            area_counter += 1
+        #Frame Delay: 500ms -> max_FPS/2,then (max_FPS/2)/4 for each area
+        if(delay == int(max_FPS/8)):
             delay = 0
+            area_counter += 1
+
 
     delay += 1
 
