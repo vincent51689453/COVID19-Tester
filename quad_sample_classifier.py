@@ -2,6 +2,7 @@
 @@@ Name  : Quad COVID-19 Samples Classifier
 @@@ Author: VincentChan
 @@@ Date  : 22/2/2021
+@@@ MCU   : STM32H743
 """
 
 """
@@ -17,9 +18,11 @@ import pyb
 from pyb import UART
 import ustruct
 
-#GPIO
+#System wakeup GIPO
 ready = pyb.Pin("P2",pyb.Pin.OUT_PP)
 ready.low()
+test_led = pyb.LED(3)
+test_led.on()
 
 #Camera sensor setup
 sensor.reset()
@@ -54,11 +57,12 @@ while(True):
     #FPS Counter
     clock.tick()
 
-    #Send GPIO signal
+    #Send GPIO signal (System Ready)
     ready.high()
 
     #Image capture
     img = sensor.snapshot()
+
     #Image Rotation
     img = img.replace(img,vflip=True,hmirror=False,transpose=True)
 
@@ -68,7 +72,7 @@ while(True):
             #Area 1
             h = area1_ymax-area1_ymin
             w = area1_xmax-area1_xmin
-            img = img.crop((area1_xmin, area1_ymin,w,h))
+            img = img.crop(roi=(area1_xmin, area1_ymin,w,h))
             if(delay == (max_FPS-1)):
                 #Only send once before the end of this period
                 msg = ustruct.pack("b",1)
@@ -78,7 +82,7 @@ while(True):
             #Area 2
             h = area2_ymax-area2_ymin
             w = area2_xmax-area2_xmin
-            img = img.crop((area2_xmin, area2_ymin,w,h))
+            img = img.crop(roi=(area2_xmin, area2_ymin,w,h))
             if(delay == (max_FPS-1)):
                 #Only send once before the end of this period
                 msg = ustruct.pack("b",2)
@@ -88,7 +92,7 @@ while(True):
             #Area 3
             h = area3_ymax-area3_ymin
             w = area3_xmax-area3_xmin
-            img = img.crop((area3_xmin, area3_ymin,w,h))
+            img = img.crop(roi=(area3_xmin, area3_ymin,w,h))
             if(delay == (max_FPS-1)):
                 #Only send once before the end of this period
                 msg = ustruct.pack("b",3)
@@ -98,7 +102,7 @@ while(True):
             #Area 4
             h = area4_ymax-area4_ymin
             w = area4_xmax-area4_xmin
-            img = img.crop((area4_xmin, area4_ymin,w,h))
+            img = img.crop(roi=(area4_xmin, area4_ymin,w,h))
             if(delay == (max_FPS-1)):
                 #Only send once before the end of this period
                 msg = ustruct.pack("b",4)
