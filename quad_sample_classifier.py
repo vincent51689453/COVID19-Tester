@@ -161,8 +161,10 @@ while(True):
         if(area_counter == (max_area_num+1)):
             #Reset
             area_counter = 1
+
             # Send UART message
             print("#{} Message->: {}".format(message_index,uart_msg_start))
+            uart.write(uart_msg_start)
             uart_msg_start = "A"
             message_index += 1
 
