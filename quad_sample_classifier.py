@@ -110,10 +110,10 @@ while(True):
             h = area1_ymax-area1_ymin
             w = area1_xmax-area1_xmin
             img = img.crop(roi=(area1_xmin, area1_ymin,w,h))
+            #TO-DO: Detection Core with average
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area1")
-                #TO-DO: Detection Core
                 area1 = message_padding(10,4)
                 uart_msg_start  += area1
 
@@ -123,10 +123,10 @@ while(True):
             h = area2_ymax-area2_ymin
             w = area2_xmax-area2_xmin
             img = img.crop(roi=(area2_xmin, area2_ymin,w,h))
+            #TO-DO: Detection Core with average
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area2")
-                #TO-DO: Detection Core
                 area2 = message_padding(20,4)
                 uart_msg_start  += area2
 
@@ -136,10 +136,10 @@ while(True):
             h = area3_ymax-area3_ymin
             w = area3_xmax-area3_xmin
             img = img.crop(roi=(area3_xmin, area3_ymin,w,h))
+            #TO-DO: Detection Core with average
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area3")
-                #TO-DO: Detection Core
                 area3 = message_padding(30,4)
                 uart_msg_start  += area3
 
@@ -149,10 +149,10 @@ while(True):
             h = area4_ymax-area4_ymin
             w = area4_xmax-area4_xmin
             img = img.crop(roi=(area4_xmin, area4_ymin,w,h))
+            #TO-DO: Detection Core with average
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area4")
-                #TO-DO: Detection Core
                 area4 = message_padding(40,4)
                 uart_msg_start  += area4
                 uart_msg_start  += uart_msg_tail
@@ -163,7 +163,7 @@ while(True):
             area_counter = 1
 
             # Send UART message
-            print("#{} Message->: {}".format(message_index,uart_msg_start))
+            print("#{} Message->: {}\r\n".format(message_index,uart_msg_start))
             uart.write(uart_msg_start)
             uart_msg_start = "A"
             message_index += 1
