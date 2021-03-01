@@ -59,6 +59,30 @@ message_index = 0    # UART Message index
 #OPENMV P1 (UART1 TX) <-> Arduino MEGA 10 (RX)
 uart = UART(1,115200)
 
+#Function to ensure a integer value is padded to constant length string
+def message_padding(int_msg,fixed_length):
+    x = 0
+    pad_msg = "0"
+    zero = "0"
+
+    #Find number of zeros needed
+    l = len(str(int_msg))
+    zeros = fixed_length - l
+
+    #Padding
+    while(x<(zeros-1)):
+        pad_msg += zero
+        x += 1
+
+    #Add original msg after padding
+    if(zeros>0):
+        pad_msg += str(int_msg)
+    else:
+        pad_msg = str(int_msg)
+
+    return pad_msg
+
+
 #Capture and Loop
 while(True):
 
@@ -87,6 +111,7 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area1")
+                #TO-DO: Detection Core
 
         if(area_counter == 2):
             #Area 2
@@ -96,6 +121,8 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area2")
+                #TO-DO: Detection Core
+
         if(area_counter == 3):
             #Area 3
             h = area3_ymax-area3_ymin
@@ -104,6 +131,7 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area3")
+                #TO-DO: Detection Core
 
         if(area_counter == 4):
             #Area 4
@@ -113,11 +141,12 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area4")
+                #TO-DO: Detection Core
 
         if(area_counter == (max_area_num+1)):
             #Reset
             area_counter = 1
-            # Send message
+            # Send UART message
             print("#{} Message->: {}".format(message_index,"000"))
             message_index += 1
 
