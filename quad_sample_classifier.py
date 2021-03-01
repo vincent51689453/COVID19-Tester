@@ -62,6 +62,16 @@ uart = UART(1,115200)
 uart_led = pyb.LED(3)
 uart_led_status = False
 
+#UART LED Control
+def uart_led_control(led,enable=True):
+    if(enable):
+        global uart_led_status
+        if(uart_led_status):
+            led.on()
+        else:
+            led.off()
+        uart_led_status = not(uart_led_status)
+
 #Function to ensure a integer value is padded to constant length string
 def message_padding(int_msg,fixed_length):
     x = 0
@@ -166,14 +176,7 @@ while(True):
             # Send UART message
             print("#{} Message->: {}\r\n".format(message_index,uart_msg_start))
             uart.write(uart_msg_start)
-
-            #UART LED Indicator
-            if(uart_led_status):
-                uart_led.on()
-            else:
-                uart_led.off()
-            uart_led_status = not(uart_led_status)
-
+            uart_led_control(uart_led)
             uart_msg_start = "A"
             message_index += 1
 
