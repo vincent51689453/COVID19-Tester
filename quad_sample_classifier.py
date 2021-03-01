@@ -74,6 +74,9 @@ while(True):
     #Image Rotation
     img = img.replace(img,vflip=True,hmirror=False,transpose=True)
 
+    #Frames for each area: 500ms -> max_FPS/2,then (max_FPS/2)/4 for each area
+    f = int(max_FPS/8)
+
     if enable_roi:
         #Zoom to different defined area
         if(area_counter == 1):
@@ -81,7 +84,7 @@ while(True):
             h = area1_ymax-area1_ymin
             w = area1_xmax-area1_xmin
             img = img.crop(roi=(area1_xmin, area1_ymin,w,h))
-            if(delay == (int(max_FPS/8)-1)):
+            if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area1")
 
@@ -90,7 +93,7 @@ while(True):
             h = area2_ymax-area2_ymin
             w = area2_xmax-area2_xmin
             img = img.crop(roi=(area2_xmin, area2_ymin,w,h))
-            if(delay == (int(max_FPS/8)-1)):
+            if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area2")
         if(area_counter == 3):
@@ -98,7 +101,7 @@ while(True):
             h = area3_ymax-area3_ymin
             w = area3_xmax-area3_xmin
             img = img.crop(roi=(area3_xmin, area3_ymin,w,h))
-            if(delay == (int(max_FPS/8)-1)):
+            if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area3")
 
@@ -107,7 +110,7 @@ while(True):
             h = area4_ymax-area4_ymin
             w = area4_xmax-area4_xmin
             img = img.crop(roi=(area4_xmin, area4_ymin,w,h))
-            if(delay == (int(max_FPS/8)-1)):
+            if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area4")
 
@@ -118,8 +121,8 @@ while(True):
             print("#{} Message->: {}".format(message_index,"000"))
             message_index += 1
 
-        #Frame Delay: 500ms -> max_FPS/2,then (max_FPS/2)/4 for each area
-        if(delay == int(max_FPS/8)):
+        #Frame Delay
+        if(delay == f):
             delay = 0
             area_counter += 1
 
