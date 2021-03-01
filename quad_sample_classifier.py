@@ -28,8 +28,6 @@ import ustruct
 #System wakeup GIPO
 ready = pyb.Pin("P2",pyb.Pin.OUT_PP)
 ready.low()
-test_led = pyb.LED(3)
-test_led.on()
 
 #Camera sensor setup
 sensor.reset()
@@ -59,7 +57,10 @@ uart_msg_tail = "B"       # UART Message tailer
 #UART
 #OPENMV PO (UART1 RX) <-> Arduino MEGA 11 (TX)
 #OPENMV P1 (UART1 TX) <-> Arduino MEGA 10 (RX)
+#UART LED -> BLUE
 uart = UART(1,115200)
+uart_led = pyb.LED(3)
+uart_led_status = False
 
 #Function to ensure a integer value is padded to constant length string
 def message_padding(int_msg,fixed_length):
@@ -165,6 +166,14 @@ while(True):
             # Send UART message
             print("#{} Message->: {}\r\n".format(message_index,uart_msg_start))
             uart.write(uart_msg_start)
+
+            #UART LED Indicator
+            if(uart_led_status):
+                uart_led.on()
+            else:
+                uart_led.off()
+            uart_led_status = not(uart_led_status)
+
             uart_msg_start = "A"
             message_index += 1
 
