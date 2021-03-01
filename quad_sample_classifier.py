@@ -47,12 +47,14 @@ area3_xmin, area3_ymin, area3_xmax, area3_ymax = 6,108,84,143
 area4_xmin, area4_ymin, area4_xmax, area4_ymax = 9,261,225,315
 
 #System Control Variables
-enable_roi = True    # ON/OFF Digital Zoom
-area_counter = 1     # Area Indicator
-max_FPS = 77         # FPS for this program
-delay = 0            # Delay counter
-max_area_num = 4     # Total number of digital zoom areas
-message_index = 0    # UART Message index
+enable_roi = True         # ON/OFF Digital Zoom
+area_counter = 1          # Area Indicator
+max_FPS = 77              # FPS for this program
+delay = 0                 # Delay counter
+max_area_num = 4          # Total number of digital zoom areas
+message_index = 0         # UART Message index
+uart_msg_start = "A"      # UART Message header
+uart_msg_tail = "B"       # UART Message tailer
 
 #UART
 #OPENMV PO (UART1 RX) <-> Arduino MEGA 11 (TX)
@@ -111,6 +113,8 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area1")
+                area1 = message_padding(10,4)
+                uart_msg_start  += area1
                 #TO-DO: Detection Core
 
         if(area_counter == 2):
@@ -121,6 +125,8 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area2")
+                area2 = message_padding(20,4)
+                uart_msg_start  += area2
                 #TO-DO: Detection Core
 
         if(area_counter == 3):
@@ -131,6 +137,8 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area3")
+                area3 = message_padding(30,4)
+                uart_msg_start  += area3
                 #TO-DO: Detection Core
 
         if(area_counter == 4):
@@ -141,13 +149,17 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area4")
+                area4 = message_padding(40,4)
+                uart_msg_start  += area4
+                uart_msg_start  += uart_msg_tail
                 #TO-DO: Detection Core
 
         if(area_counter == (max_area_num+1)):
             #Reset
             area_counter = 1
             # Send UART message
-            print("#{} Message->: {}".format(message_index,"000"))
+            print("#{} Message->: {}".format(message_index,uart_msg_start))
+            uart_msg_start = "A"
             message_index += 1
 
         #Frame Delay
