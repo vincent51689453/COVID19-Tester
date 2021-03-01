@@ -113,9 +113,10 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area1")
+                #TO-DO: Detection Core
                 area1 = message_padding(10,4)
                 uart_msg_start  += area1
-                #TO-DO: Detection Core
+
 
         if(area_counter == 2):
             #Area 2
@@ -125,9 +126,10 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area2")
+                #TO-DO: Detection Core
                 area2 = message_padding(20,4)
                 uart_msg_start  += area2
-                #TO-DO: Detection Core
+
 
         if(area_counter == 3):
             #Area 3
@@ -137,9 +139,10 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area3")
+                #TO-DO: Detection Core
                 area3 = message_padding(30,4)
                 uart_msg_start  += area3
-                #TO-DO: Detection Core
+
 
         if(area_counter == 4):
             #Area 4
@@ -149,10 +152,11 @@ while(True):
             if(delay == (f-1)):
                 #Only send once before the end of this period
                 print("Area4")
+                #TO-DO: Detection Core
                 area4 = message_padding(40,4)
                 uart_msg_start  += area4
                 uart_msg_start  += uart_msg_tail
-                #TO-DO: Detection Core
+
 
         if(area_counter == (max_area_num+1)):
             #Reset
