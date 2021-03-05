@@ -39,15 +39,15 @@ sensor.skip_frames(time = 2000)
 clock = time.clock()
 
 #Digital Zoom Areas
-area1_xmin, area1_ymin, area1_xmax, area1_ymax = 6,29,46,62
-area2_xmin, area2_ymin, area2_xmax, area2_ymax = 196,7,234,69
-area3_xmin, area3_ymin, area3_xmax, area3_ymax = 6,108,84,143
-area4_xmin, area4_ymin, area4_xmax, area4_ymax = 9,261,225,315
+area1_xmin, area1_ymin, area1_xmax, area1_ymax = 7,19,64,88
+area2_xmin, area2_ymin, area2_xmax, area2_ymax = 90,24,151,77
+area3_xmin, area3_ymin, area3_xmax, area3_ymax = 172,17,243,73
+area4_xmin, area4_ymin, area4_xmax, area4_ymax = 250,7,315,74
 
 #System Control Variables
 enable_roi = True         # ON/OFF Digital Zoom
 area_counter = 1          # Area Indicator
-max_FPS = 77              # FPS for this program
+max_FPS = 19              # FPS for this program
 delay = 0                 # Delay counter
 max_area_num = 4          # Total number of digital zoom areas
 message_index = 0         # UART Message index
@@ -72,6 +72,15 @@ def uart_led_control(led,enable=True):
             led.off()
         uart_led_status = not(uart_led_status)
 
+#Blob Detection
+chemical_thresh = [(38, 94, 20, -95, -21, 67)]  #Blob Detection Threshold
+area_thresh_n = 300                             #Detection area threshold for negative samples
+area_thresh_p = 10                              #Detection area threshold for positive samples
+
+area1_total_n = 0                               #Area1 Total area for negative samples
+area1_total_p = 0                               #Area1 Total area for positive samples
+area1_num = 0                                   #Sample size
+
 #Function to ensure a integer value is padded to constant length string
 def message_padding(int_msg,fixed_length):
     x = 0
@@ -92,7 +101,6 @@ def message_padding(int_msg,fixed_length):
         pad_msg += str(int_msg)
     else:
         pad_msg = str(int_msg)
-
     return pad_msg
 
 
@@ -109,25 +117,63 @@ while(True):
     img = sensor.snapshot()
 
     #Image Rotation
-    img = img.replace(img,vflip=True,hmirror=False,transpose=True)
+    img = img.replace(img,vflip=True,hmirror=True,transpose=False)
 
-    #Frames for each area: 500ms -> max_FPS/2,then (max_FPS/2)/4 for each area
-    f = int(max_FPS/8)
+    #Frames for each area
+    f = int(max_FPS/1)
 
     if enable_roi:
         #Zoom to different defined area
         if(area_counter == 1):
+
             #Area 1
             h = area1_ymax-area1_ymin
             w = area1_xmax-area1_xmin
             img = img.crop(roi=(area1_xmin, area1_ymin,w,h))
-            #TO-DO: Detection Core with average
+
+            #Blob Detection Core
+            areas_in_blob_n = []
+            areas_in_blob_p = []
+
+            for blob in img.find_blobs(chemical_thresh,pixels_threshold=1, \
+                                       area_threshold=1, merge=True):
+                blob_area = blob[4]
+                blob_rect = blob.rect()
+                blob_cx,blob_cy = blob.cx(), blob.cy()
+                #print("Area:{} CX:{} CY:{}".format(blob_area,blob_cx,blob_cy))
+                if(blob_area >= area_thresh_n):
+                    #Negative
+                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
+                    img = img.draw_string(blob_cx,blob_cy,"N",color=(255,0,0))
+                    areas_in_blob_n.append(blob_area)
+
+                if((blob_area >=  area_thresh_p)and(blob_area < area_thresh_n)):
+                    #Positive
+                    img = img.draw_rectangle(blob_rect,color=(0,0,255))
+                    img = img.draw_string(blob_cx,blob_cy,"P",color=(0,0,255))
+                    areas_in_blob_p.append(blob_area)
+
+            #Finding average for negative/positive
+            if(len(areas_in_blob_n)>0):
+                area1_total_n += max(areas_in_blob_n)
+            else:
+                area1_total_p += max(areas_in_blob_p)
+            area1_num += 1
+
             if(delay == (f-1)):
                 #Only send once before the end of this period
-                print("Area1")
-                area1 = message_padding(10,4)
-                uart_msg_start  += area1
+                print("<--- Start COVID Detection --->")
+                #Take average for negative/positive
+                if(area1_total_n == 0):
+                    area1 = message_padding(int(area1_total_p/area1_num),4)
+                else:
+                    area1 = message_padding(int(area1_total_n/area1_num),4)
 
+                print("Area1:",area1)
+                uart_msg_start  += area1
+                area1_total_p = 0
+                area1_total_n = 0
+                area1_num = 0
 
         if(area_counter == 2):
             #Area 2
@@ -141,7 +187,6 @@ while(True):
                 area2 = message_padding(20,4)
                 uart_msg_start  += area2
 
-
         if(area_counter == 3):
             #Area 3
             h = area3_ymax-area3_ymin
@@ -153,7 +198,6 @@ while(True):
                 print("Area3")
                 area3 = message_padding(30,4)
                 uart_msg_start  += area3
-
 
         if(area_counter == 4):
             #Area 4
@@ -167,7 +211,6 @@ while(True):
                 area4 = message_padding(40,4)
                 uart_msg_start  += area4
                 uart_msg_start  += uart_msg_tail
-
 
         if(area_counter == (max_area_num+1)):
             #Reset
@@ -183,8 +226,7 @@ while(True):
         #Frame Delay
         if(delay == f):
             delay = 0
-            area_counter += 1
-
-
+            #area_counter += 1
+            area_counter = 1
     delay += 1
 
