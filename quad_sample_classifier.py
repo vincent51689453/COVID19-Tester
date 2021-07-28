@@ -61,16 +61,7 @@ uart_msg_tail = "B"       # UART Message tailer
 uart = UART(1,115200)
 uart_led = pyb.LED(3)
 uart_led_status = False
-
-#UART LED Control
-def uart_led_control(led,enable=True):
-    if(enable):
-        global uart_led_status
-        if(uart_led_status):
-            led.on()
-        else:
-            led.off()
-        uart_led_status = not(uart_led_status)
+uart_package_index = 1
 
 #Blob Detection
 chemical_thresh = [(38, 94, 20, -95, -21, 67)]  #Blob Detection Threshold
@@ -95,6 +86,42 @@ area3_num = 0                                   #Sample size
 area4_total_n = 0                               #Area4 Total area for negative samples
 area4_total_p = 0                               #Area4 Total area for positive samples
 area4_num = 0                                   #Sample size
+
+#UART Message Packet Control
+def uart_package_manager(system_msg):
+    global uart_package_index
+    head,tail = system_msg[0],system_msg[-1]
+    data_index = '0'
+    sample_1 = '0000'
+    sample_2 = '0000'
+
+    if(uart_package_index == 1):
+        # Only send sample 1 & 2
+        data_index = str(uart_package_index)
+        sample_1 = system_msg[1:5]
+        sample_2 = system_msg[5:9]
+        uart_package_index = 2
+    else:
+        # Only send sample 3 & 4
+        data_index = str(uart_package_index)
+        sample_1 = system_msg[9:13]
+        sample_2 = system_msg[13:17]
+        uart_package_index = 1
+
+
+    msg = head + data_index + sample_1 + sample_2 + tail
+    return msg
+
+
+#UART LED Control
+def uart_led_control(led,enable=True):
+    if(enable):
+        global uart_led_status
+        if(uart_led_status):
+            led.on()
+        else:
+            led.off()
+        uart_led_status = not(uart_led_status)
 
 #Function to ensure a integer value is padded to constant length string
 def message_padding(int_msg,fixed_length):
@@ -134,8 +161,9 @@ while(True):
     #Image Rotation
     img = img.replace(img,vflip=True,hmirror=True,transpose=False)
 
-    #Frames for each area
+    #Frames for each area (2 is shortest)
     f = int(max_FPS/1)
+    f = 2
 
     if enable_roi:
         #Zoom to different defined area
@@ -341,8 +369,10 @@ while(True):
             area_counter = 1
 
             # Send UART message
-            print("#{} Message->: {}\r\n".format(message_index,uart_msg_start))
-            uart.write(uart_msg_start)
+            print("#{} Message->: {}".format(message_index,uart_msg_start))
+            uart_message = uart_package_manager(uart_msg_start)
+            print("#{} Sent through UART->: {}\r\n".format(message_index,uart_message))
+            uart.write(uart_message)
             uart_led_control(uart_led)
             uart_msg_start = "A"
             message_index += 1
