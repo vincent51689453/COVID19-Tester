@@ -67,7 +67,7 @@ uart_package_index = 1
 chemical_thresh = [(38, 94, 20, -95, -21, 67)]  #Blob Detection Threshold
 
 area_thresh_n = 200                             #Detection area threshold for negative samples
-area_thresh_p = 20                             #Detection area threshold for positive samples
+area_thresh_p = 20                              #Detection area threshold for positive samples
 
 height_thresh = 20                              #Boundary box height threshold
 
@@ -109,7 +109,7 @@ def uart_package_manager(system_msg):
         uart_package_index = 1
 
 
-    msg = head + data_index + sample_1 + sample_2 + tail
+    msg = head + data_index + sample_1 + sample_2 + tail + '\r\n'
     return msg
 
 
@@ -161,9 +161,9 @@ while(True):
     #Image Rotation
     img = img.replace(img,vflip=True,hmirror=True,transpose=False)
 
-    #Frames for each area (2 is shortest)
-    f = int(max_FPS/1)
-    f = 2
+    #Frames for each area (3 is shortest)
+    #f = int(max_FPS/1)
+    f = 3
 
     if enable_roi:
         #Zoom to different defined area
@@ -383,4 +383,3 @@ while(True):
             area_counter += 1
 
     delay += 1
-
