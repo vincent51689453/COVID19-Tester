@@ -22,3 +22,4 @@ There are 4 samples under identical light conditions.
 ![image](https://github.com/vincent51689453/COVID19-Tester/blob/main/git_image/raw_input.PNG)
 
 ## Blob Detection output
+![image](https://github.com/vincent51689453/COVID19-Tester/blob/main/git_image/single_sample_output.PNG)
