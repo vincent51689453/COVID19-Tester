@@ -64,12 +64,9 @@ uart_led_status = False
 uart_package_index = 1
 
 #Blob Detection
-chemical_thresh = [(38, 94, 20, -95, -21, 67)]  #Blob Detection Threshold
+chemical_thresh = [(44, 100, 70, -124, 28, 80)]  #Blob Detection Threshold
 
 area_thresh_n = 200                             #Detection area threshold for negative samples
-area_thresh_p = 20                             #Detection area threshold for positive samples
-
-height_thresh = 20                              #Boundary box height threshold
 
 area1_total_n = 0                               #Area1 Total area for negative samples
 area1_total_p = 0                               #Area1 Total area for positive samples
@@ -182,19 +179,8 @@ while(True):
                 blob_area = blob[4]
                 blob_rect = blob.rect()
                 blob_cx,blob_cy = blob.cx(), blob.cy()
-                img = img.draw_string(1,1,"1",color=(0,255,0))
                 #print("Area:{} CX:{} CY:{}".format(blob_area,blob_cx,blob_cy))
-                if((blob_area >= area_thresh_n)and(blob_rect[3]>=height_thresh)):
-                    #Negative
-                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
-                    img = img.draw_string(blob_cx,blob_cy,"N",color=(255,0,0))
-                    areas_in_blob_n.append(blob_area)
-
-                if((blob_area >=  area_thresh_p)and(blob_area < area_thresh_n)and(blob_rect[3]<height_thresh)):
-                    #Positive
-                    img = img.draw_rectangle(blob_rect,color=(0,0,255))
-                    img = img.draw_string(blob_cx,blob_cy,"P",color=(0,0,255))
-                    areas_in_blob_p.append(blob_area)
+                areas_in_blob_n.append(blob_area)
 
             #Finding average for negative/positive
             if(len(areas_in_blob_n)>0):
@@ -216,6 +202,10 @@ while(True):
                 area1_total_p = 0
                 area1_total_n = 0
                 area1_num = 0
+                #Visualize detection result
+                img = img.draw_string(1,1,"1",color=(255,0,0))
+                img = img.draw_rectangle(blob_rect,color=(255,0,0))
+
 
         if(area_counter == 2):
             #Area 2
@@ -230,19 +220,10 @@ while(True):
                 blob_area = blob[4]
                 blob_rect = blob.rect()
                 blob_cx,blob_cy = blob.cx(), blob.cy()
-                img = img.draw_string(1,1,"2",color=(0,255,0))
                 #print("Area:{} CX:{} CY:{}".format(blob_area,blob_cx,blob_cy))
-                if((blob_area >= area_thresh_n)and(blob_rect[3]>=height_thresh)):
-                    #Negative
-                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
-                    img = img.draw_string(blob_cx,blob_cy,"N",color=(255,0,0))
-                    areas_in_blob_n.append(blob_area)
+                areas_in_blob_n.append(blob_area)
 
-                if((blob_area >=  area_thresh_p)and(blob_area < area_thresh_n)and(blob_rect[3]<height_thresh)):
-                    #Positive
-                    img = img.draw_rectangle(blob_rect,color=(0,0,255))
-                    img = img.draw_string(blob_cx,blob_cy,"P",color=(0,0,255))
-                    areas_in_blob_p.append(blob_area)
+
 
             #Finding average for negative/positive
             if(len(areas_in_blob_n)>0):
@@ -265,6 +246,9 @@ while(True):
                 area2_total_p = 0
                 area2_total_n = 0
                 area2_num = 0
+                #Visualize detection result
+                img = img.draw_string(1,1,"2",color=(255,0,0))
+                img = img.draw_rectangle(blob_rect,color=(255,0,0))
 
         if(area_counter == 3):
             #Area 3
@@ -280,18 +264,7 @@ while(True):
                 blob_rect = blob.rect()
                 blob_cx,blob_cy = blob.cx(), blob.cy()
                 #print("Area:{} CX:{} CY:{}".format(blob_area,blob_cx,blob_cy))
-                img = img.draw_string(1,1,"3",color=(0,255,0))
-                if((blob_area >= area_thresh_n)and(blob_rect[3]>=height_thresh)):
-                    #Negative
-                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
-                    img = img.draw_string(blob_cx,blob_cy,"N",color=(255,0,0))
-                    areas_in_blob_n.append(blob_area)
-
-                if((blob_area >= area_thresh_p)and(blob_area < area_thresh_n)and(blob_rect[3]<height_thresh)):
-                    #Positive
-                    img = img.draw_rectangle(blob_rect,color=(0,0,255))
-                    img = img.draw_string(blob_cx,blob_cy,"P",color=(0,0,255))
-                    areas_in_blob_p.append(blob_area)
+                areas_in_blob_n.append(blob_area)
 
             #Finding average for negative/positive
             if(len(areas_in_blob_n)>0):
@@ -314,6 +287,9 @@ while(True):
                 area3_total_p = 0
                 area3_total_n = 0
                 area3_num = 0
+                #Visualize detection result
+                img = img.draw_string(1,1,"3",color=(255,0,0))
+                img = img.draw_rectangle(blob_rect,color=(255,0,0))
 
         if(area_counter == 4):
             #Area 4
@@ -329,18 +305,7 @@ while(True):
                 blob_rect = blob.rect()
                 blob_cx,blob_cy = blob.cx(), blob.cy()
                 #print("Area:{} CX:{} CY:{}".format(blob_area,blob_cx,blob_cy))
-                img = img.draw_string(1,1,"4",color=(0,255,0))
-                if((blob_area >= area_thresh_n)and(blob_rect[3]>=height_thresh)):
-                    #Negative
-                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
-                    img = img.draw_string(blob_cx,blob_cy,"N",color=(255,0,0))
-                    areas_in_blob_n.append(blob_area)
-
-                if((blob_area >=  area_thresh_p)and(blob_area < area_thresh_n)and(blob_rect[3]<height_thresh)):
-                    #Positive
-                    img = img.draw_rectangle(blob_rect,color=(0,0,255))
-                    img = img.draw_string(blob_cx,blob_cy,"P",color=(0,0,255))
-                    areas_in_blob_p.append(blob_area)
+                areas_in_blob_n.append(blob_area)
 
             #Finding average for negative/positive
             if(len(areas_in_blob_n)>0):
@@ -364,6 +329,9 @@ while(True):
                 area4_total_p = 0
                 area4_total_n = 0
                 area4_num = 0
+                #Visualize detection result
+                img = img.draw_string(1,1,"4",color=(255,0,0))
+                img = img.draw_rectangle(blob_rect,color=(255,0,0))
 
         if(area_counter == (max_area_num+1)):
             #Reset
