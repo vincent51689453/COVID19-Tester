@@ -27,7 +27,7 @@ import ustruct
 
 #System wakeup GIPO
 ready = pyb.Pin("P2",pyb.Pin.OUT_PP)
-ready.low()
+ready.high()
 
 #Camera sensor setup
 sensor.reset()
@@ -39,10 +39,10 @@ sensor.skip_frames(time = 2000)
 clock = time.clock()
 
 #Digital Zoom Areas
-area1_xmin, area1_ymin, area1_h, area1_w = 47,20,30,25
-area2_xmin, area2_ymin, area2_h, area2_w = 115,13,28,31
-area3_xmin, area3_ymin, area3_h, area3_w = 183,10,30,32
-area4_xmin, area4_ymin, area4_h, area4_w = 252,9,25,27
+area1_xmin, area1_ymin, area1_h, area1_w = 22,84,41,38
+area2_xmin, area2_ymin, area2_h, area2_w = 96,area1_ymin,area1_h,area1_w
+area3_xmin, area3_ymin, area3_h, area3_w = 172,area1_ymin,area1_h,area1_w
+area4_xmin, area4_ymin, area4_h, area4_w = 250,area1_ymin,area1_h,area1_w
 
 #System Control Variables
 enable_roi = True         # ON/OFF Digital Zoom
@@ -67,7 +67,7 @@ uart_package_index = 1
 chemical_thresh = [(38, 94, 20, -95, -21, 67)]  #Blob Detection Threshold
 
 area_thresh_n = 200                             #Detection area threshold for negative samples
-area_thresh_p = 20                              #Detection area threshold for positive samples
+area_thresh_p = 20                             #Detection area threshold for positive samples
 
 height_thresh = 20                              #Boundary box height threshold
 
@@ -109,7 +109,7 @@ def uart_package_manager(system_msg):
         uart_package_index = 1
 
 
-    msg = head + data_index + sample_1 + sample_2 + tail + '\r\n'
+    msg = head + data_index + sample_1 + sample_2 + tail
     return msg
 
 
@@ -153,17 +153,18 @@ while(True):
     clock.tick()
 
     #Send GPIO signal (System Ready)
-    ready.high()
+    ready.low()
 
     #Image capture
     img = sensor.snapshot()
 
     #Image Rotation
-    img = img.replace(img,vflip=True,hmirror=True,transpose=False)
+    img = img.replace(img,vflip=False,hmirror=False,transpose=False)
 
-    #Frames for each area (3 is shortest)
-    #f = int(max_FPS/1)
+    #Frames for each area (2 is shortest)
+    f = int(max_FPS/1)
     f = 3
+
 
     if enable_roi:
         #Zoom to different defined area
@@ -383,3 +384,4 @@ while(True):
             area_counter += 1
 
     delay += 1
+
