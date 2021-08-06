@@ -17,3 +17,7 @@ It has a fixed packet size with 11 and ASCII codes are sent over UART port.
 
 Interval: 250ms
 
+## Camera Input
+There are 4 samples under identical light conditions.
+![image](https://github.com/vincent51689453/COVID19-Tester/blob/main/git_image/raw_input.PNG)
+
