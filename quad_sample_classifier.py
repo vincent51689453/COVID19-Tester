@@ -25,7 +25,7 @@ import pyb
 from pyb import UART
 import ustruct
 
-#System wakeup GIPO
+#System wakeup GPIO
 ready = pyb.Pin("P2",pyb.Pin.OUT_PP)
 ready.high()
 
