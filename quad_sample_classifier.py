@@ -39,7 +39,7 @@ sensor.skip_frames(time = 2000)
 clock = time.clock()
 
 #Digital Zoom Areas
-area1_xmin, area1_ymin, area1_h, area1_w = 22,84,41,38
+area1_xmin, area1_ymin, area1_h, area1_w = 22,84,30,38
 area2_xmin, area2_ymin, area2_h, area2_w = 96,area1_ymin,area1_h,area1_w
 area3_xmin, area3_ymin, area3_h, area3_w = 172,area1_ymin,area1_h,area1_w
 area4_xmin, area4_ymin, area4_h, area4_w = 250,area1_ymin,area1_h,area1_w
@@ -173,6 +173,7 @@ while(True):
             #Blob Detection Core
             areas_in_blob_n = []
             areas_in_blob_p = []
+            blob_rect = None
 
             for blob in img.find_blobs(chemical_thresh,pixels_threshold=1, \
                                        area_threshold=1, merge=True):
@@ -204,7 +205,8 @@ while(True):
                 area1_num = 0
                 #Visualize detection result
                 img = img.draw_string(1,1,"1",color=(255,0,0))
-                img = img.draw_rectangle(blob_rect,color=(255,0,0))
+                if blob_rect is not None:
+                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
 
 
         if(area_counter == 2):
@@ -214,6 +216,8 @@ while(True):
             #Blob Detection Core
             areas_in_blob_n = []
             areas_in_blob_p = []
+            blob_rect = None
+
 
             for blob in img.find_blobs(chemical_thresh,pixels_threshold=1, \
                                        area_threshold=1, merge=True):
@@ -248,7 +252,8 @@ while(True):
                 area2_num = 0
                 #Visualize detection result
                 img = img.draw_string(1,1,"2",color=(255,0,0))
-                img = img.draw_rectangle(blob_rect,color=(255,0,0))
+                if blob_rect is not None:
+                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
 
         if(area_counter == 3):
             #Area 3
@@ -257,6 +262,7 @@ while(True):
             #Blob Detection Core
             areas_in_blob_n = []
             areas_in_blob_p = []
+            blob_rect = None
 
             for blob in img.find_blobs(chemical_thresh,pixels_threshold=1, \
                                        area_threshold=1, merge=True):
@@ -289,7 +295,8 @@ while(True):
                 area3_num = 0
                 #Visualize detection result
                 img = img.draw_string(1,1,"3",color=(255,0,0))
-                img = img.draw_rectangle(blob_rect,color=(255,0,0))
+                if blob_rect is not None:
+                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
 
         if(area_counter == 4):
             #Area 4
@@ -298,6 +305,7 @@ while(True):
             #Blob Detection Core
             areas_in_blob_n = []
             areas_in_blob_p = []
+            blobk_rect = None
 
             for blob in img.find_blobs(chemical_thresh,pixels_threshold=1, \
                                        area_threshold=1, merge=True):
@@ -331,7 +339,8 @@ while(True):
                 area4_num = 0
                 #Visualize detection result
                 img = img.draw_string(1,1,"4",color=(255,0,0))
-                img = img.draw_rectangle(blob_rect,color=(255,0,0))
+                if blob_rect is not None:
+                    img = img.draw_rectangle(blob_rect,color=(255,0,0))
 
         if(area_counter == (max_area_num+1)):
             #Reset
